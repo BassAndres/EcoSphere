@@ -7,12 +7,14 @@
 
 namespace ecosphere {
 enum class NavigationState { active, preparing };
-// CPU: prepara sesión/recursos sin cerrar la anterior; el anfitrión valida GPU antes del commit.
+// cambia entre la plaza y las tres zonas
 class ZoneNavigator final {
 public:
     using Factory = std::function<std::unique_ptr<IModule>(Zone)>;
-    using Prepare = std::function<void(const std::vector<ContentPlacement>&,const LightingSettings&,const Camera&)>;
-    explicit ZoneNavigator(const std::filesystem::path& assets, ZoneSettings settings = {}, Factory factory = {});
+    using Prepare = std::function<void(const std::vector<ContentPlacement>&, const LightingSettings&,
+                                       const Camera&)>;
+    explicit ZoneNavigator(const std::filesystem::path& assets, ZoneSettings settings = {},
+                           Factory factory = {});
     ~ZoneNavigator();
     Zone active() const { return activeZone_; }
     NavigationState state() const { return state_; }

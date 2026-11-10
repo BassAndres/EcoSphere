@@ -5,7 +5,7 @@
 #include <functional>
 
 namespace ecosphere {
-// Capturas del framebuffer real y comparaciones por regiones proyectadas, sin RGB fijo.
+// captura la escena de materiales con varias luces y compara regiones de pantalla
 void checkLightingFramebuffer(const std::filesystem::path& directory, int width, int height,
     const glm::mat4& viewProjection, const LightingSettings& settings, Model& showcase,
     const std::function<void(const LightingSettings&)>& render);

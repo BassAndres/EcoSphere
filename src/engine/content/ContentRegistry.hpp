@@ -7,13 +7,16 @@
 #include <vector>
 
 namespace ecosphere {
-// Snapshot por valor: retiene el modelo incluso después de cerrar la sesión.
+// una entidad lista para dibujar: dueño, id, modelo y matriz de mundo
 struct ContentPlacement {
     std::string owner, id;
     std::shared_ptr<const Model> resource, model;
     glm::mat4 world{1};
 };
+
 class RegisteredContent;
+
+// guarda las entidades que agrega cada módulo
 class ContentRegistry final {
 public:
     explicit ContentRegistry(const std::filesystem::path& assetRoot);
@@ -23,7 +26,6 @@ public:
     std::vector<ContentPlacement> placements() const;
     void update(double deltaSeconds);
     std::optional<LightingSettings> lighting(const std::string& owner) const;
-    // Solo para el adaptador de entrada del núcleo; prestado hasta update/cierre.
     InteractionSystem& interactions(const std::string& owner);
     bool playing(const std::string& owner) const;
     void setPlaying(const std::string& owner, bool playing);

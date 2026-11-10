@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace ecosphere {
+// nodo del grafo de escena: cada hijo es un cubo de color
 class SceneNode final {
 public:
     Transform transform;
@@ -13,7 +14,6 @@ public:
     SceneNode(const SceneNode&) = delete;
     SceneNode& operator=(const SceneNode&) = delete;
 
-    // Solo se crean hijos nuevos: no hay reparentado, ciclos ni propiedad compartida.
     SceneNode& addChild(const Transform& local, glm::vec3 tint) {
         auto node = std::make_unique<SceneNode>();
         node->transform = local;
@@ -23,6 +23,7 @@ public:
         return *children_.back();
     }
 
+    // mundo del hijo = mundo del padre * local
     template<class Visitor>
     void forEach(const Visitor& visit, const glm::mat4& parent = glm::mat4(1.0f)) const {
         const glm::mat4 world = parent * transform.matrix();
@@ -30,7 +31,7 @@ public:
         for (const auto& child : children_) child->forEach(visit, world);
     }
 private:
-    bool drawable_ = false; // La raíz solo agrupa; los hijos representan cubos.
+    bool drawable_ = false;
     std::vector<std::unique_ptr<SceneNode>> children_;
 };
 

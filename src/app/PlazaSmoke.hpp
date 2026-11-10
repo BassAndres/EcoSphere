@@ -4,8 +4,10 @@
 #include <functional>
 
 namespace ecosphere {
-using PlazaRender = std::function<void(const LightingSettings&,bool,const std::optional<std::string>&)>;
-void checkPlazaFramebuffer(const std::filesystem::path& directory,int width,int height,
-    ContentRegistry& registry,Camera& camera,const LightingSettings& lighting,double loadSeconds,
-    const PlazaRender& render,const std::function<bool()>& present);
+// dibuja la escena: luces, si incluye contenido y qué instancia aislar
+using PlazaRender = std::function<void(const LightingSettings&, bool, const std::optional<std::string>&)>;
+
+void checkPlazaFramebuffer(const std::filesystem::path& directory, int width, int height,
+    ContentRegistry& registry, Camera& camera, const LightingSettings& lighting, double loadSeconds,
+    const PlazaRender& render, const std::function<bool()>& present);
 }

@@ -11,12 +11,16 @@ namespace ecosphere {
 inline std::string readShaderFile(const std::filesystem::path& path) {
     std::ifstream file(path, std::ios::binary);
     if (!file) throw std::runtime_error("Cannot open shader: " + path.string());
-    std::ostringstream text; text << file.rdbuf();
+    std::ostringstream text;
+    text << file.rdbuf();
     if (file.bad()) throw std::runtime_error("Cannot read shader: " + path.string());
     return text.str();
 }
+
+// compila un shader, si falla lanza el log de errores
 struct Shader {
     GLuint handle;
+
     Shader(GLenum type, const char* source) : handle(glCreateShader(type)) {
         try {
             glShaderSource(handle, 1, &source, nullptr);
@@ -31,16 +35,17 @@ struct Shader {
                 throw std::runtime_error(std::string("GLSL compile failed: ") + log.data());
             }
         } catch (...) {
-            // Si el constructor falla (incluso al reservar el log), no hay destructor.
             glDeleteShader(handle);
             throw;
         }
     }
+
     ~Shader() { glDeleteShader(handle); }
     Shader(const Shader&) = delete;
     Shader& operator=(const Shader&) = delete;
 };
-// El programa devuelto tiene propietario; un fallo de enlace lo libera aquí.
+
+// une vertex y fragment shader en un programa
 inline GLuint linkProgram(GLuint vertex, GLuint fragment) {
     const GLuint program = glCreateProgram();
     try {

@@ -7,153 +7,246 @@
 
 namespace ecosphere {
 namespace {
-glm::quat rotation(float degrees, glm::vec3 axis = {0,1,0}) {
+constexpr bool selectable = true;
+constexpr bool notSelectable = false;
+
+glm::quat rotation(float degrees, glm::vec3 axis = {0, 1, 0}) {
     return glm::angleAxis(glm::radians(degrees), axis);
 }
-void validate(const aquabio::Settings& s) {
-    if (!finiteVector(s.clearColor) || glm::any(glm::lessThan(s.clearColor,glm::vec3(0))) ||
-        glm::any(glm::greaterThan(s.clearColor,glm::vec3(1))))
+
+void validate(const aquabio::Settings& settings) {
+    const glm::vec3 color = settings.clearColor;
+    if (!finiteVector(color) || glm::any(glm::lessThan(color, glm::vec3(0))) ||
+        glm::any(glm::greaterThan(color, glm::vec3(1))))
         throw std::invalid_argument("Invalid AquaBio clear color");
-    for (float v : {s.pumpSpeedDeg,s.scraperSpeedDeg,s.flowSpeedDeg,s.cycleSpeedDeg})
-        if (!std::isfinite(v) || std::abs(v)>1440) throw std::invalid_argument("Invalid AquaBio rotation speed");
-    for (double v : {s.gutterDurationSeconds,s.cartridgeDurationSeconds})
-        if (!std::isfinite(v) || v<=.1) throw std::invalid_argument("Invalid AquaBio keyframe duration");
-    for (float v : {s.gutterSwingDegrees,s.reedAmplitudeDegrees})
-        if (!std::isfinite(v) || std::abs(v)>30) throw std::invalid_argument("Invalid AquaBio swing");
-    for (float v : {s.cartridgeLiftMeters,s.cartridgeTravelMeters,s.floatingAmplitudeMeters})
-        if (!std::isfinite(v) || v<0 || v>2) throw std::invalid_argument("Invalid AquaBio travel");
-    for (double v : {s.floatingFrequencyHz,s.reedFrequencyHz})
-        if (!std::isfinite(v) || v<0 || v>20) throw std::invalid_argument("Invalid AquaBio frequency");
-    for (std::size_t i=0;i<s.positions.size();++i) {
-        if (!std::isfinite(s.yawDegrees[i])) throw std::invalid_argument("Invalid AquaBio yaw");
-        validatePose({s.positions[i], rotation(s.yawDegrees[i]), s.scale[i]});
+
+    for (float speed : {settings.pumpSpeedDeg, settings.scraperSpeedDeg, settings.flowSpeedDeg,
+                        settings.cycleSpeedDeg}) {
+        if (!std::isfinite(speed) || std::abs(speed) > 1440)
+            throw std::invalid_argument("Invalid AquaBio rotation speed");
     }
-    validateLighting(s.lighting, {0,1.7f,6});
+    for (double duration : {settings.gutterDurationSeconds, settings.cartridgeDurationSeconds}) {
+        if (!std::isfinite(duration) || duration <= .1)
+            throw std::invalid_argument("Invalid AquaBio keyframe duration");
+    }
+    for (float swing : {settings.gutterSwingDegrees, settings.reedAmplitudeDegrees}) {
+        if (!std::isfinite(swing) || std::abs(swing) > 30)
+            throw std::invalid_argument("Invalid AquaBio swing");
+    }
+    for (float travel : {settings.cartridgeLiftMeters, settings.cartridgeTravelMeters,
+                         settings.floatingAmplitudeMeters}) {
+        if (!std::isfinite(travel) || travel < 0 || travel > 2)
+            throw std::invalid_argument("Invalid AquaBio travel");
+    }
+    for (double frequency : {settings.floatingFrequencyHz, settings.reedFrequencyHz}) {
+        if (!std::isfinite(frequency) || frequency < 0 || frequency > 20)
+            throw std::invalid_argument("Invalid AquaBio frequency");
+    }
+    for (std::size_t i = 0; i < settings.positions.size(); ++i) {
+        if (!std::isfinite(settings.yawDegrees[i])) throw std::invalid_argument("Invalid AquaBio yaw");
+        validatePose({settings.positions[i], rotation(settings.yawDegrees[i]), settings.scale[i]});
+    }
+    validateLighting(settings.lighting, {0, 1.7f, 6});
 }
-AnimationDescriptor simple(float speed, glm::vec3 axis) {
-    return {SimpleAnimation{SimpleMotion::rotation,axis,speed,0}};
+
+// ---- Animaciones ----
+
+AnimationDescriptor simpleRotation(float speed, glm::vec3 axis) {
+    return {SimpleAnimation{SimpleMotion::rotation, axis, speed, 0}};
 }
-AnimationDescriptor gutter(const aquabio::Settings& s) {
-    const double d=s.gutterDurationSeconds;
+
+// canaleta que se inclina de un lado a otro
+AnimationDescriptor gutterAnimation(const aquabio::Settings& settings) {
+    const double duration = settings.gutterDurationSeconds;
+    const Pose left{{}, rotation(-settings.gutterSwingDegrees, {0, 0, 1}), glm::vec3(1)};
+    const Pose right{{}, rotation(settings.gutterSwingDegrees, {0, 0, 1}), glm::vec3(1)};
     KeyframeTrack track({
-        {0, {{}, rotation(-s.gutterSwingDegrees,{0,0,1}), glm::vec3(1)}},
-        {d*.25, Pose{}},
-        {d*.5, {{}, rotation(s.gutterSwingDegrees,{0,0,1}), glm::vec3(1)}},
-        {d*.75, Pose{}},
-        {d, {{}, rotation(-s.gutterSwingDegrees,{0,0,1}), glm::vec3(1)}}});
-    return {std::move(track),d};
+        {0, left},
+        {duration * .25, Pose{}},
+        {duration * .5, right},
+        {duration * .75, Pose{}},
+        {duration, left}
+    });
+    return {std::move(track), duration};
 }
-AnimationDescriptor cartridge(const aquabio::Settings& s) {
-    const double d=s.cartridgeDurationSeconds;
-    Pose lifted, placed;
-    lifted.position={0,s.cartridgeLiftMeters,0};
-    placed.position={s.cartridgeTravelMeters,s.cartridgeLiftMeters,0};
-    placed.orientation=rotation(24);
-    return {KeyframeTrack({{0,Pose{}},{d*.2,lifted},{d*.4,placed},{d*.65,placed},{d*.85,lifted},{d,Pose{}}}),d};
+
+// cartucho que sube, se mueve a un lado y regresa
+AnimationDescriptor cartridgeAnimation(const aquabio::Settings& settings) {
+    const double duration = settings.cartridgeDurationSeconds;
+    Pose lifted;
+    lifted.position = {0, settings.cartridgeLiftMeters, 0};
+    Pose placed;
+    placed.position = {settings.cartridgeTravelMeters, settings.cartridgeLiftMeters, 0};
+    placed.orientation = rotation(24);
+    KeyframeTrack track({
+        {0, Pose{}},
+        {duration * .2, lifted},
+        {duration * .4, placed},
+        {duration * .65, placed},
+        {duration * .85, lifted},
+        {duration, Pose{}}
+    });
+    return {std::move(track), duration};
 }
-AnimationDescriptor floating(const aquabio::Settings& s) {
-    ProceduralAnimation fn=[a=s.floatingAmplitudeMeters,f=s.floatingFrequencyHz](double t) {
-        const double p=std::fmod(t*f,1.0)*glm::two_pi<double>();
-        Pose v; v.position.y=a*static_cast<float>(std::sin(p));
-        v.orientation=rotation(2*static_cast<float>(std::sin(p+.4)),{0,0,1});
-        return v;
+
+// planta flotante que sube y baja
+AnimationDescriptor floatingAnimation(const aquabio::Settings& settings) {
+    const float amplitude = settings.floatingAmplitudeMeters;
+    const double frequency = settings.floatingFrequencyHz;
+    ProceduralAnimation motion = [amplitude, frequency](double seconds) {
+        const double phase = std::fmod(seconds * frequency, 1.0) * glm::two_pi<double>();
+        Pose pose;
+        pose.position.y = amplitude * static_cast<float>(std::sin(phase));
+        pose.orientation = rotation(2 * static_cast<float>(std::sin(phase + .4)), {0, 0, 1});
+        return pose;
     };
-    return {std::move(fn)};
+    return {std::move(motion)};
 }
-AnimationDescriptor reeds(const aquabio::Settings& s) {
-    ProceduralAnimation fn=[a=s.reedAmplitudeDegrees,f=s.reedFrequencyHz](double t) {
-        const double p=std::fmod(t*f,1.0)*glm::two_pi<double>();
-        Pose v; v.orientation=rotation(a*static_cast<float>(.75*std::sin(p)+.25*std::sin(2*p+.3)),{0,0,1});
-        return v;
+
+// juncos que se mecen
+AnimationDescriptor reedAnimation(const aquabio::Settings& settings) {
+    const float amplitude = settings.reedAmplitudeDegrees;
+    const double frequency = settings.reedFrequencyHz;
+    ProceduralAnimation motion = [amplitude, frequency](double seconds) {
+        const double phase = std::fmod(seconds * frequency, 1.0) * glm::two_pi<double>();
+        const float wave = static_cast<float>(.75 * std::sin(phase) + .25 * std::sin(2 * phase + .3));
+        Pose pose;
+        pose.orientation = rotation(amplitude * wave, {0, 0, 1});
+        return pose;
     };
-    return {std::move(fn)};
+    return {std::move(motion)};
 }
+
 class AquaBioModule final : public IModule {
 public:
-    explicit AquaBioModule(aquabio::Settings s) : settings_(std::move(s)) {}
+    explicit AquaBioModule(aquabio::Settings settings) : settings_(std::move(settings)) {}
+
     std::string_view id() const noexcept override { return "aquabio"; }
+
     void initialize(ModuleServices& services) override {
-        services_=&services;
-        services.log("aquabio"); services.log(services.content() ? "initialize content" : "initialize stub");
+        services_ = &services;
+        services.log("aquabio");
+        services.log(services.content() ? "initialize content" : "initialize stub");
         services.setClearColor(settings_.clearColor);
-        if (auto* content=services.content()) {
-            const auto entities=makeAquaBioInstances(settings_);
-            content->configureLighting(settings_.lighting);
-            for (const auto& e:entities) content->add(e);
-            for (const auto& e:shared::instances("aquabio")) content->add(e);
-        }
+        auto* content = services.content();
+        if (!content) return;
+        const auto entities = makeAquaBioInstances(settings_);
+        content->configureLighting(settings_.lighting);
+        for (const auto& entity : entities) content->add(entity);
+        for (const auto& entity : shared::instances("aquabio")) content->add(entity);
     }
+
     void update(double) override {}
+
     void shutdown() noexcept override {
-        if (services_) {
-            services_->log("aquabio"); services_->log(services_->content() ? "shutdown content" : "shutdown stub");
-            services_=nullptr;
-        }
+        if (!services_) return;
+        services_->log("aquabio");
+        services_->log(services_->content() ? "shutdown content" : "shutdown stub");
+        services_ = nullptr;
     }
+
 private:
     aquabio::Settings settings_;
-    ModuleServices* services_=nullptr; // Prestado hasta shutdown; ModuleSession posee la capacidad.
+    ModuleServices* services_ = nullptr;
 };
 }
 
 std::string aquaBioModelId(aquabio::Model model) {
-    const int n=static_cast<int>(model);
-    if(n<1 || n>28)throw std::invalid_argument("Invalid AquaBio model number");
-    return std::string("AQUA-")+(n<10 ? "00" : "0")+std::to_string(n);
+    const int number = static_cast<int>(model);
+    if (number < 1 || number > 28) throw std::invalid_argument("Invalid AquaBio model number");
+    return std::string("AQUA-") + (number < 10 ? "00" : "0") + std::to_string(number);
 }
-std::vector<EntityDescriptor> makeAquaBioInstances(const aquabio::Settings& s) {
-    validate(s);
+
+std::vector<EntityDescriptor> makeAquaBioInstances(const aquabio::Settings& settings) {
+    validate(settings);
     using aquabio::Model;
     std::vector<EntityDescriptor> result;
-    const auto add=[&](Model model, const std::string& suffix, glm::vec3 position, bool interactive=false,
-                       std::optional<AnimationDescriptor> animation=std::nullopt, float yaw=0, glm::vec3 instanceScale=glm::vec3(1)) {
-        const auto i=static_cast<std::size_t>(model)-1;
-        EntityDescriptor e;
-        e.id=aquaBioModelId(model)+"-"+suffix;
-        e.model="aquabio/models/"+aquaBioModelId(model)+".glb";
-        e.transform={position,rotation(s.yawDegrees[i]+yaw),s.scale[i]*instanceScale};
-        validatePose(e.transform);
-        if(interactive)e.interaction=InteractionDescriptor{};
-        e.animation=std::move(animation);
-        if(s.visible[i])result.push_back(std::move(e));
+
+    // agrega una copia del modelo con los ajustes de AquaBioSettings.hpp
+    const auto add = [&](Model model, const std::string& suffix, glm::vec3 position,
+                         bool interactive = notSelectable,
+                         std::optional<AnimationDescriptor> animation = std::nullopt,
+                         float yaw = 0, glm::vec3 instanceScale = glm::vec3(1)) {
+        const auto index = static_cast<std::size_t>(model) - 1;
+        EntityDescriptor entity;
+        entity.id = aquaBioModelId(model) + "-" + suffix;
+        entity.model = "aquabio/models/" + aquaBioModelId(model) + ".glb";
+        entity.transform = {position, rotation(settings.yawDegrees[index] + yaw),
+                            settings.scale[index] * instanceScale};
+        validatePose(entity.transform);
+        if (interactive) entity.interaction = InteractionDescriptor{};
+        entity.animation = std::move(animation);
+        if (settings.visible[index]) result.push_back(std::move(entity));
     };
-    // Muestra frontal manipulable; el impulsor de la bomba conserva su propio reloj.
-    add(Model::impeller,"demo",s.impellerDemoPosition,true);
-    const std::array<const char*,28> names{{"main","entry","entry","collector","adjustable","cistern",
-        "inlet","housing","pump","tank","scraper","sand","carbon","extraction","uv","treated",
-        "distribution","manual","indicator","sampling","cycle","precipitation","basin","floating",
-        "sway","tree","shelter","demo"}};
-    for(int n=1;n<=28;++n) {
-        std::optional<AnimationDescriptor> animation;
-        switch(n) {
-            case 5: animation=gutter(s); break;
-            case 9: animation=simple(s.pumpSpeedDeg,{0,0,1}); break;
-            case 11: animation=simple(s.scraperSpeedDeg,{0,1,0}); break;
-            case 14: animation=cartridge(s); break;
-            case 19: animation=simple(s.flowSpeedDeg,{0,0,1}); break;
-            case 21: animation=simple(s.cycleSpeedDeg,{0,0,1}); break;
-            case 24: animation=floating(s); break;
-            case 25: animation=reeds(s); break;
-            default: break;
-        }
-        const bool interactive=n==6 || n==13 || n==18 || n==20 || n==28;
-        add(static_cast<Model>(n),names[n-1],s.positions[n-1],interactive,std::move(animation),0,n==3 ? s.mainWalkwayScale : glm::vec3(1));
+    const auto positionOf = [&](Model model) {
+        return settings.positions[static_cast<std::size_t>(model) - 1];
+    };
+
+    add(Model::impeller, "demo", settings.impellerDemoPosition, selectable);
+
+    // ---- Los 28 modelos (id, posición, ¿se puede tomar?, animación) ----
+    add(Model::platform, "main", positionOf(Model::platform));
+    add(Model::gateway, "entry", positionOf(Model::gateway));
+    add(Model::walkway, "entry", positionOf(Model::walkway), notSelectable, std::nullopt, 0,
+        settings.mainWalkwayScale);
+    add(Model::rainRoof, "collector", positionOf(Model::rainRoof));
+    add(Model::gutter, "adjustable", positionOf(Model::gutter), notSelectable, gutterAnimation(settings));
+    add(Model::cistern, "cistern", positionOf(Model::cistern), selectable);
+    add(Model::grate, "inlet", positionOf(Model::grate));
+    add(Model::pump, "housing", positionOf(Model::pump));
+    add(Model::impeller, "pump", positionOf(Model::impeller), notSelectable,
+        simpleRotation(settings.pumpSpeedDeg, {0, 0, 1}));
+    add(Model::sedimentation, "tank", positionOf(Model::sedimentation));
+    add(Model::scraper, "scraper", positionOf(Model::scraper), notSelectable,
+        simpleRotation(settings.scraperSpeedDeg, {0, 1, 0}));
+    add(Model::sandFilter, "sand", positionOf(Model::sandFilter));
+    add(Model::carbonFilter, "carbon", positionOf(Model::carbonFilter), selectable);
+    add(Model::cartridge, "extraction", positionOf(Model::cartridge), notSelectable,
+        cartridgeAnimation(settings));
+    add(Model::uvChamber, "uv", positionOf(Model::uvChamber));
+    add(Model::treatedTank, "treated", positionOf(Model::treatedTank));
+    add(Model::pipes, "distribution", positionOf(Model::pipes));
+    add(Model::valve, "manual", positionOf(Model::valve), selectable);
+    add(Model::flowIndicator, "indicator", positionOf(Model::flowIndicator), notSelectable,
+        simpleRotation(settings.flowSpeedDeg, {0, 0, 1}));
+    add(Model::sampling, "sampling", positionOf(Model::sampling), selectable);
+    add(Model::waterCycle, "cycle", positionOf(Model::waterCycle), notSelectable,
+        simpleRotation(settings.cycleSpeedDeg, {0, 0, 1}));
+    add(Model::cloud, "precipitation", positionOf(Model::cloud));
+    add(Model::wetland, "basin", positionOf(Model::wetland));
+    add(Model::floatingPlant, "floating", positionOf(Model::floatingPlant), notSelectable,
+        floatingAnimation(settings));
+    add(Model::reeds, "sway", positionOf(Model::reeds), notSelectable, reedAnimation(settings));
+    add(Model::riparianTree, "tree", positionOf(Model::riparianTree));
+    add(Model::pollinatorShelter, "shelter", positionOf(Model::pollinatorShelter));
+    add(Model::fish, "demo", positionOf(Model::fish), selectable);
+
+    // ---- Copias extra ----
+    add(Model::cartridge, "demo", settings.cartridgeDemoPosition, selectable);
+    for (std::size_t i = 0; i < settings.extraWalkways.size(); ++i) {
+        const std::string name = "path-" + std::to_string(i);
+        add(Model::walkway, name, settings.extraWalkways[i], notSelectable, std::nullopt,
+            settings.extraWalkwayYaws[i], settings.extraWalkwayScales[i]);
     }
-    add(Model::cartridge,"demo",s.cartridgeDemoPosition,true);
-    for(std::size_t i=0;i<s.extraWalkways.size();++i)
-        add(Model::walkway,"path-"+std::to_string(i),s.extraWalkways[i],false,std::nullopt,s.extraWalkwayYaws[i],s.extraWalkwayScales[i]);
-    add(Model::pipes,"branch",s.extraPipesPosition);
-    // Conserva los IDs static-* para no romper referencias; ahora también se animan.
-    for(std::size_t i=0;i<s.extraFloatingPlants.size();++i)
-        add(Model::floatingPlant,"static-"+std::to_string(i),s.extraFloatingPlants[i],false,floating(s),static_cast<float>(i)*47);
-    for(std::size_t i=0;i<s.extraReeds.size();++i)
-        add(Model::reeds,"static-"+std::to_string(i),s.extraReeds[i],false,reeds(s),static_cast<float>(i)*31);
-    for(std::size_t i=0;i<s.extraTrees.size();++i)
-        add(Model::riparianTree,"bank-"+std::to_string(i),s.extraTrees[i]);
+    add(Model::pipes, "branch", settings.extraPipesPosition);
+    for (std::size_t i = 0; i < settings.extraFloatingPlants.size(); ++i) {
+        const std::string name = "static-" + std::to_string(i);
+        add(Model::floatingPlant, name, settings.extraFloatingPlants[i], notSelectable,
+            floatingAnimation(settings), static_cast<float>(i) * 47);
+    }
+    for (std::size_t i = 0; i < settings.extraReeds.size(); ++i) {
+        const std::string name = "static-" + std::to_string(i);
+        add(Model::reeds, name, settings.extraReeds[i], notSelectable, reedAnimation(settings),
+            static_cast<float>(i) * 31);
+    }
+    for (std::size_t i = 0; i < settings.extraTrees.size(); ++i)
+        add(Model::riparianTree, "bank-" + std::to_string(i), settings.extraTrees[i]);
     return result;
 }
+
 std::unique_ptr<IModule> makeAquaBio(const aquabio::Settings& settings) {
     return std::make_unique<AquaBioModule>(settings);
 }
+
 std::unique_ptr<IModule> makeAquaBio() { return makeAquaBio(aquabio::settings); }
 }

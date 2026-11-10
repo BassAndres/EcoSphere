@@ -6,6 +6,7 @@
 
 namespace ecosphere {
 namespace {
+// servicios que ve un módulo: los del host más su propio contenido
 class SessionServices final : public ModuleServices {
 public:
     SessionServices(ModuleServices& host, std::string_view owner)
@@ -18,6 +19,7 @@ private:
     std::unique_ptr<ContentServices> content_;
 };
 }
+
 ModuleSession::ModuleSession(std::unique_ptr<IModule> module, ModuleServices& services)
     : module_(std::move(module)) {
     if (!module_ || module_->id().empty()) {
@@ -27,7 +29,7 @@ ModuleSession::ModuleSession(std::unique_ptr<IModule> module, ModuleServices& se
         services_ = std::make_unique<SessionServices>(services, module_->id());
         module_->initialize(*services_);
     } catch (...) {
-        // El constructor incompleto no ejecuta ~ModuleSession: compensar aquí.
+        // si initialize falla se apaga el módulo aquí
         module_->shutdown();
         throw;
     }

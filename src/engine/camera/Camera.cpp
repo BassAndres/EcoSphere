@@ -16,6 +16,7 @@ void Camera::setMode(CameraMode mode) {
     if (mode_ == CameraMode::firstPerson) position.y = observerHeight;
 }
 
+// dirección de la mirada a partir de yaw y pitch
 glm::vec3 Camera::forward() const {
     const float yaw = glm::radians(yawDegrees);
     const float pitch = glm::radians(pitchDegrees);
@@ -29,13 +30,14 @@ void Camera::update(const CameraInput& input, double deltaSeconds) {
                               -demo::pitchLimitDegrees, demo::pitchLimitDegrees);
     glm::vec3 direction = forward();
     const glm::vec3 right = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
+    // en primera persona se camina sobre el plano XZ
     if (mode_ == CameraMode::firstPerson) {
         direction.y = 0;
         direction = glm::normalize(direction);
     }
     glm::vec3 motion = direction * input.forward + right * input.right;
     if (mode_ == CameraMode::free) motion.y += input.vertical;
-    // Diagonal y ascenso simultáneos conservan la misma velocidad total.
+    // misma velocidad también en diagonal
     const float length = glm::length(motion);
     if (length > 1.0f) motion /= length;
     position += motion * speed * seconds;
@@ -52,7 +54,7 @@ std::optional<glm::mat4> Camera::projection(int width, int height) const {
         demo::nearPlane <= 0 || demo::farPlane <= demo::nearPlane) {
         throw std::invalid_argument("Perspective requires 0 < FOV < 180 and 0 < near < far");
     }
-    return glm::perspective(glm::radians(fovDegrees), static_cast<float>(width) / height,
-                            demo::nearPlane, demo::farPlane);
+    const float aspect = static_cast<float>(width) / height;
+    return glm::perspective(glm::radians(fovDegrees), aspect, demo::nearPlane, demo::farPlane);
 }
 }

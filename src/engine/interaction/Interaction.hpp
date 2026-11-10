@@ -7,19 +7,22 @@
 
 namespace ecosphere {
 struct Ray { glm::vec3 origin, direction; };
-// NDC (-1,-1)..(1,1); (0,0) es el centro. Origen en el plano cercano.
+
+// ndc va de (-1,-1) a (1,1), (0,0) es el centro de la pantalla
 Ray cameraRay(const glm::mat4& view, const glm::mat4& projection, glm::vec2 ndc = {0,0});
 std::optional<float> intersectAabb(const Ray& ray, const Aabb& bounds, const glm::mat4& world = glm::mat4(1));
+
 struct InteractiveObject {
-    std::string id; // Identificador explícito estable, nunca dirección de memoria o índice de dibujo.
+    std::string id;
     Pose base, animation, manipulation;
     Aabb bounds;
-    std::string parent; // Vacío = raíz; padre registrado antes que hijo.
+    std::string parent; // vacío si no tiene padre
 };
+
+// selección con rayo, mover/rotar/escalar y tomar objetos
 class InteractionSystem final {
 public:
     void add(InteractiveObject object);
-    // Referencias prestadas hasta el siguiente add/destrucción; conservar id y parent tras registrar.
     InteractiveObject& object(const std::string& id);
     const InteractiveObject& object(const std::string& id) const;
     glm::mat4 world(const std::string& id) const;

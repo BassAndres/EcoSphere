@@ -4,13 +4,15 @@
 
 namespace ecosphere {
 enum class CameraMode { firstPerson, free };
+
+// ejes del teclado entre -1 y 1
 struct CameraInput {
-    float forward = 0, right = 0, vertical = 0; // Ejes de teclado en [-1,1].
+    float forward = 0, right = 0, vertical = 0;
     float yaw = 0, pitch = 0;
 };
 
-// CPU: no conoce GLFW, GLAD ni los módulos. Solo la aplicación traduce las teclas.
 double cameraDeltaSeconds(double elapsed, bool focused);
+
 class Camera final {
 public:
     glm::vec3 position = demo::cameraStart;
@@ -23,7 +25,7 @@ public:
     void setMode(CameraMode mode);
     void update(const CameraInput& input, double deltaSeconds);
     glm::mat4 view() const;
-    // Minimizado o framebuffer vacío: no hay proyección ni dibujo.
+    // sin valor si la ventana está minimizada
     std::optional<glm::mat4> projection(int framebufferWidth, int framebufferHeight) const;
 private:
     glm::vec3 forward() const;

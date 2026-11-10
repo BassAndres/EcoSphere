@@ -1,4 +1,4 @@
-/* Implementaciones revisadas, sin acceso a archivos desde stb_image. */
+/* implementación de cgltf y stb_image (solo PNG y JPEG desde memoria) */
 #define CGLTF_IMPLEMENTATION
 #include <cgltf.h>
 #define STB_IMAGE_IMPLEMENTATION

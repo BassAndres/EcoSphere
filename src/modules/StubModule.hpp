@@ -4,12 +4,14 @@
 #include <utility>
 
 namespace ecosphere {
-// Muestra técnica compartida; conserva el contrato de stubs con anfitriones antiguos.
+// módulo mínimo con un solo objeto de ejemplo
 class StubModule final : public IModule {
 public:
     StubModule(std::string_view id, glm::vec3 color, EntityDescriptor example)
         : id_(id), color_(color), example_(std::move(example)) {}
+
     std::string_view id() const noexcept override { return id_; }
+
     void initialize(ModuleServices& services) override {
         services_ = &services;
         services_->log(id_);
@@ -23,13 +25,14 @@ public:
         }
     }
     void update(double) override {}
+
     void shutdown() noexcept override {
-        if (services_) {
-            services_->log(id_);
-            services_->log(services_->content() ? "shutdown content" : "shutdown stub");
-            services_ = nullptr; // La referencia prestada deja de usarse al cerrar.
-        }
+        if (!services_) return;
+        services_->log(id_);
+        services_->log(services_->content() ? "shutdown content" : "shutdown stub");
+        services_ = nullptr;
     }
+
 private:
     std::string_view id_;
     glm::vec3 color_;

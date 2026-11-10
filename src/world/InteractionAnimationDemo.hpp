@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace ecosphere {
-// Dueño CPU de la demo. La aplicación presta matrices/modelos al renderer existente.
+// demo de cubos animados que se pueden seleccionar y mover
 class InteractionAnimationDemo final {
 public:
     explicit InteractionAnimationDemo(const Model& imported);
@@ -15,9 +15,11 @@ public:
     double time() const { return player_.elapsed(); }
     bool playing() const { return player_.playing(); }
     void synchronize();
+
     InteractionSystem interaction;
     std::shared_ptr<Model> cubes, outline;
     double importedMeshDeterminant = 1;
+
 private:
     AnimationPlayer player_;
     KeyframeTrack track_;

@@ -73,6 +73,41 @@ que no contribuye porque la iluminación directa general está apagada. F5 alter
 el modelo especular; 0 restaura también Blinn-Phong. La tecla 5
 controla el cielo; 6 activa una comparación de regresión, no una luz.
 
+## Abrir en Visual Studio
+
+Igual que en las prácticas: abre `visualstudio/EcoSphere.sln`, elige **Debug** y **x64** y presiona F5.
+No hace falta CMake ni instalar GLFW. Los detalles están en [visualstudio/README.md](visualstudio/README.md).
+
+## Dónde está cada cosa
+
+El código está escrito para leerlo y modificarlo fácil: una instrucción por línea, nombres completos,
+funciones largas partidas en pasos con nombre y comentarios cortos en español.
+
+| Quiero cambiar... | Archivo |
+|---|---|
+| Posición, escala, giro o visibilidad de un modelo de una zona | `src/modules/<Zona>/<Zona>Settings.hpp` (un renglón por modelo) |
+| Qué modelos se agregan, cuáles se pueden tomar y qué animación tienen | `src/modules/<Zona>/Module.cpp` |
+| Luces de una zona | campo `lighting` del `Settings.hpp` de la zona |
+| Cámara al entrar a cada zona, velocidad al caminar | `src/world/ZoneSettings.hpp` |
+| Plaza central | `src/world/PlazaSettings.hpp` y `src/world/Plaza.cpp` |
+| Teclas | `handleKey()` en `src/app/main.cpp` |
+| Movimiento de cámara cada cuadro | `readCameraInput()` en `src/app/main.cpp` |
+| Ciclo principal | `runFrameLoop()` y `runFrame()` en `src/app/main.cpp` |
+| Carga de GLB | `src/engine/assets/AssetManager.cpp` |
+| VAO/VBO y uniforms | `src/engine/graphics/ModelRenderer.cpp` |
+| Iluminación Phong / Blinn-Phong, Fresnel | `assets/common/shaders/model.frag` |
+| Matriz de normales | `assets/common/shaders/model.vert` y `collectInstances` en `ModelRenderer.cpp` |
+| Selección con rayo | `src/engine/interaction/Interaction.cpp` |
+| Keyframes (mix y slerp) | `src/engine/animation/Animation.cpp` |
+| Cielo (cubemap) | `src/engine/graphics/Environment.cpp` |
+
+Los archivos `src/app/*Smoke.cpp` son los modos de captura automática (`--aquabio-smoke`, etc.).
+No se usan al abrir la plaza normalmente.
+
+Algunas pruebas comparan contra el estado entregado (número exacto de modelos, posiciones del
+inventario, capturas), así que al mover o agregar algo es normal que fallen unas cuantas aunque el
+programa funcione bien.
+
 ## Ejecución rápida
 
 Con las dependencias preparadas, los lanzadores encuentran el proyecto desde

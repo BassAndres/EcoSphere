@@ -4,7 +4,7 @@
 #include <filesystem>
 
 namespace ecosphere {
-// Recurso propio procedural: 6 caras de 32² RGB lineal; no hay archivos ni IO de cubemap.
+// cielo procedural: cubemap de 6 caras y su skybox
 class Environment final {
 public:
     explicit Environment(const std::filesystem::path& shaders);
