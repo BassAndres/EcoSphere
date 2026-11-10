@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="app">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\animation">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\assets">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\camera">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\content">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\core">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\graphics">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\interaction">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\scene">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="modules">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="modules\AquaBio">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="modules\EcoCycle">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="modules\EcoEnergy">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shared">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="world">
+      <UniqueIdentifier>{9C2E4A10-0000-4000-8000-X12}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\app\AquaBioSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\ContentSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\EcoCycleSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\EcoEnergySmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\InteractionDemoInput.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\InteractionSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\LightingSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\main.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\NavigationHud.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\NavigationHudLayout.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\NavigationSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\app\PlazaSmoke.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\animation\Animation.cpp">
+      <Filter>engine\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\assets\AssetManager.cpp">
+      <Filter>engine\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\assets\ThirdParty.c">
+      <Filter>engine\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\camera\Camera.cpp">
+      <Filter>engine\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\content\ContentRegistry.cpp">
+      <Filter>engine\content</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\core\ModuleSession.cpp">
+      <Filter>engine\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\graphics\Environment.cpp">
+      <Filter>engine\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\graphics\ModelRenderer.cpp">
+      <Filter>engine\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\graphics\SceneRenderer.cpp">
+      <Filter>engine\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\graphics\Triangle.cpp">
+      <Filter>engine\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\interaction\Interaction.cpp">
+      <Filter>engine\interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\scene\Scene.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\modules\AquaBio\Module.cpp">
+      <Filter>modules\AquaBio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\modules\EcoCycle\Module.cpp">
+      <Filter>modules\EcoCycle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\modules\EcoEnergy\Module.cpp">
+      <Filter>modules\EcoEnergy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shared\SharedResources.cpp">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\world\InteractionAnimationDemo.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\world\LightingDemo.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\world\Plaza.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\world\ZoneNavigator.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glad\src\gl.c">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\app\AquaBioSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\ContentSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\EcoCycleSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\EcoEnergySmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\FpsCounter.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\InteractionDemoInput.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\InteractionSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\LightingControls.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\LightingSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\NavigationHud.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\NavigationHudLayout.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\NavigationSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\PlazaSmoke.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\app\SrgbFramebuffer.hpp">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\animation\Animation.hpp">
+      <Filter>engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\assets\AssetManager.hpp">
+      <Filter>engine\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\assets\Material.hpp">
+      <Filter>engine\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\assets\Model.hpp">
+      <Filter>engine\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\camera\Camera.hpp">
+      <Filter>engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\content\ContentRegistry.hpp">
+      <Filter>engine\content</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\Environment.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\ModelRenderer.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\RenderState.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\SceneRenderer.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\Shader.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\Shading.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\graphics\Triangle.hpp">
+      <Filter>engine\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\interaction\Interaction.hpp">
+      <Filter>engine\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\scene\Lighting.hpp">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\scene\Scene.hpp">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\scene\Transform.hpp">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\AquaBio\AquaBio.hpp">
+      <Filter>modules\AquaBio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\AquaBio\AquaBioSettings.hpp">
+      <Filter>modules\AquaBio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\EcoCycle\EcoCycle.hpp">
+      <Filter>modules\EcoCycle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\EcoCycle\EcoCycleSettings.hpp">
+      <Filter>modules\EcoCycle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\EcoEnergy\EcoEnergy.hpp">
+      <Filter>modules\EcoEnergy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\EcoEnergy\EcoEnergySettings.hpp">
+      <Filter>modules\EcoEnergy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modules\StubModule.hpp">
+      <Filter>modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shared\SharedResources.hpp">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\DemoSceneSettings.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\InteractionAnimationDemo.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\InteractionAnimationDemoSettings.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\LightingDemo.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\LightingDemoSettings.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\Plaza.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\PlazaSettings.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\ZoneNavigator.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\world\ZoneSettings.hpp">
+      <Filter>world</Filter>
+    </ClInclude>
+    <None Include="..\assets\common\shaders\model.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\common\shaders\model.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\common\shaders\scene.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\common\shaders\scene.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\common\shaders\skybox.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\common\shaders\skybox.vert">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

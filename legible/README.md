@@ -9,7 +9,11 @@ Usa los modelos (`assets/`), las librerías (`third_party/`), el SDK (`include/`
 
 ## Compilar y abrir
 
-Desde **Developer PowerShell for VS**, dentro de `legible/`:
+La forma más directa es la de las prácticas: abre `visualstudio/EcoSphere.sln`, deja
+**EcoSphereLegible** como proyecto de inicio y presiona F5. Los detalles están en
+[visualstudio/README.md](../visualstudio/README.md).
+
+También se puede con CMake, desde **Developer PowerShell for VS**, dentro de `legible/`:
 
 ```powershell
 cmake --preset windows-dev -Dglfw3_DIR=<ruta a GLFW 3.4>\lib\cmake\glfw3
