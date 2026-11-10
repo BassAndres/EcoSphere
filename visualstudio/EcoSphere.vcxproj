@@ -16,6 +16,8 @@
     <ProjectGuid>{3F6A2B10-5C1D-4E8A-9B2F-0E1C5A7D3B01}</ProjectGuid>
     <RootNamespace>EcoSphere</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <!-- F5 siempre copia shaders y modelos aunque solo haya cambiado un .frag/.vert o un .glb -->
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
